@@ -3,7 +3,6 @@ import User from "../user/user.model.js";
 import AppError from "../../utils/appError.js";
 import clearImage from "../../utils/clearImage.js";
 import APIFeatures from "../../utils/apiFeatures.js";
-import { getIO } from "../../config/socket.js";
 
 export const createPost = async (data) => {
     const { title, content, imageUrl, creator } = data;
@@ -19,11 +18,6 @@ export const createPost = async (data) => {
     await User.findByIdAndUpdate(creator, { $push: { posts: post._id } });
 
     const populatedPost = await post.populate("creator", "name email");
-
-    getIO().emit("posts", {
-        action: "create",
-        post: populatedPost,
-    });
 
     return populatedPost;
 };
@@ -95,11 +89,6 @@ export const updatePost = async (id, userId, data, newImageUrl = null) => {
 
     const populatedPost = await post.populate("creator", "name email");
 
-    getIO().emit("posts", {
-        action: "update",
-        post: populatedPost,
-    });
-
     return populatedPost;
 };
 
@@ -120,11 +109,6 @@ export const deletePost = async (id, userId) => {
 
     await post.deleteOne();
     await User.findByIdAndUpdate(post.creator, { $pull: { posts: id } });
-
-    getIO().emit("posts", {
-        action: "delete",
-        post: id,
-    });
 
     return post;
 };

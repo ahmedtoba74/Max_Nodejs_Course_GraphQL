@@ -17,11 +17,13 @@
         "dotenv": "^17.4.2",
         "express": "^5.2.1",
         "express-validator": "^7.3.2",
+        "graphql": "^16.14.2",
+        "graphql-http": "^1.22.4",
         "jsonwebtoken": "^9.0.3",
         "mongoose": "^9.8.1",
         "morgan": "^1.11.0",
         "multer": "^2.2.0",
-        "socket.io": "^4.8.3"
+        "ruru": "^2.0.1"
     },
     "devDependencies": {
         "nodemon": "^3.1.10"
