@@ -1,20 +1,22 @@
 import User from "./user.model.js";
 import AppError from "../../utils/appError.js";
 
-export const getUserStatus = async (userId) => {
+export const getUser = async (userId) => {
     const user = await User.findById(userId);
     if (!user) {
         throw new AppError("User not found", 404);
     }
-    return user.status;
+    return user;
 };
 
-export const updateUserStatus = async (userId, status) => {
+export const updateUser = async (userId, { status, name, email }) => {
     const user = await User.findById(userId);
     if (!user) {
         throw new AppError("User not found", 404);
     }
-    user.status = status;
+    if (status) user.status = status;
+    if (name) user.name = name;
+    if (email) user.email = email;
     await user.save();
     return user;
 };

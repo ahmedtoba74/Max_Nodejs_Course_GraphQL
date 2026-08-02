@@ -3,7 +3,7 @@ import AppError from "../../utils/appError.js";
 import { generateToken } from "../../utils/jwtHelper.js";
 
 export const signup = async (data) => {
-    const { name, email, password, status } = data;
+    const { name, email, password } = data;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -14,7 +14,6 @@ export const signup = async (data) => {
         name,
         email,
         password,
-        status,
     });
 
     const token = generateToken({ id: user._id });
