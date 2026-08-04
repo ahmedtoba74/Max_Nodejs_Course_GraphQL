@@ -1,4 +1,5 @@
 import AppError from "./appError.js";
+import logger from "./logger.js";
 
 /**
  * Handle MongoDB CastError (invalid ID format).
@@ -85,7 +86,10 @@ const sendErrorProd = (err, req, res) => {
     }
 
     // Programming or unknown error: do not leak details
-    console.error("ERROR 💥", err);
+    logger.error("Unhandled REST Error 💥", {
+        message: err.message,
+        stack: err.stack,
+    });
     return res.status(500).json({
         status: "error",
         message: "Something went very wrong!",
@@ -95,7 +99,7 @@ const sendErrorProd = (err, req, res) => {
 /**
  * Global Error Handling Middleware
  */
-const globalErrorHandler = (err, req, res, next) => {
+export const globalErrorHandler = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || "error";
 
@@ -126,4 +130,60 @@ const globalErrorHandler = (err, req, res, next) => {
     }
 };
 
-export default globalErrorHandler;
+/**
+ * Format GraphQL Errors (Development vs Production)
+ */
+export const formatGraphQLError = (graphqlError) => {
+    // Extract original error thrown in resolver/service
+    let error = graphqlError.originalError || graphqlError;
+
+    // Transform Mongoose & JWT errors into operational AppErrors
+    if (error.name === "CastError") error = handleCastErrorDB(error);
+    if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+    if (error.name === "ValidationError")
+        error = handleValidationErrorDB(error);
+    if (error.name === "JsonWebTokenError") error = handleJWTError();
+    if (error.name === "TokenExpiredError") error = handleJWTExpiredError();
+
+    const statusCode = error.statusCode || 500;
+    const status = error.status || "error";
+    const data = error.data || null;
+
+    // 🟢 DEVELOPMENT MODE: Full details + Stack Trace
+    if (process.env.NODE_ENV === "development") {
+        return {
+            message: error.message || "An error occurred.",
+            locations: graphqlError.locations,
+            path: graphqlError.path,
+            extensions: {
+                statusCode: statusCode,
+                status: status,
+                data: data,
+                stack: error.stack,
+            },
+        };
+    }
+
+    // 🔴 PRODUCTION MODE: Operational vs Unknown Errors
+    if (error.isOperational) {
+        return {
+            message: error.message,
+            path: graphqlError.path,
+            extensions: {
+                statusCode: statusCode,
+                status: status,
+                ...(data && { data }),
+            },
+        };
+    }
+
+    // Hide internal details for unhandled programming bugs in Production
+    console.error("GRAPHQL ERROR 💥", graphqlError);
+    return {
+        message: "Something went very wrong!",
+        extensions: {
+            statusCode: 500,
+            status: "error",
+        },
+    };
+};

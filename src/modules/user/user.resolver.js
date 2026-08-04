@@ -16,8 +16,14 @@ export const userResolvers = {
         if (!context.req.isAuth) {
             throw new AppError("Not authenticated!", 401);
         }
-        validateUpdateUser({ userId: context.req.userId?.toString(), ...userInput });
-        const user = await userService.updateUser(context.req.userId, userInput);
+        validateUpdateUser({
+            userId: context.req.userId?.toString(),
+            ...userInput,
+        });
+        const user = await userService.updateUser(
+            context.req.userId,
+            userInput,
+        );
         return user;
     },
 };

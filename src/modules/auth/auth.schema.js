@@ -10,3 +10,12 @@ export const authTypeDefs = `
         password: String!
     }
 `;
+
+export const authQueries = `
+    login(email: String!, password: String!): AuthData!
+`;
+
+export const authMutations = `
+    createUser(userInput: UserInputData!): User!
+    logout: Boolean!
+`;
