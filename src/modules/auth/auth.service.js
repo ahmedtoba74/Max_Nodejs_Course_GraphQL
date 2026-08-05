@@ -16,6 +16,10 @@ export const signup = async (data) => {
         password,
     });
 
+    if (!user) {
+        throw new AppError("User not created", 400);
+    }
+
     const token = generateToken({ id: user._id });
 
     user.password = undefined;
@@ -50,3 +54,10 @@ export const login = async (data) => {
         token,
     };
 };
+
+export const authService = {
+    signup,
+    login,
+};
+
+export default authService;

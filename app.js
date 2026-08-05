@@ -40,9 +40,9 @@ if (missingEnvVars.length > 0) {
 
 const app = express();
 
-// Overload Protection
+// Overload Protection (Bypassed during automated test execution)
 app.use((req, res, next) => {
-    if (toobusy()) {
+    if (process.env.NODE_ENV !== "test" && toobusy()) {
         return res
             .status(503)
             .json({ message: "Server busy, try again later." });
@@ -58,10 +58,14 @@ app.use(
     }),
 );
 app.use(compression());
-// Rate Limiter
+// Rate Limiter (Higher limit for development and testing)
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
-    max: process.env.NODE_ENV === "development" ? 500 : 100,
+    max:
+        process.env.NODE_ENV === "development" ||
+        process.env.NODE_ENV === "test"
+            ? 2000
+            : 100,
     message: "Too many requests, please try again later.",
 });
 app.use("/graphql", limiter);

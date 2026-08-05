@@ -1,4 +1,4 @@
-import * as authService from "./auth.service.js";
+import { authService } from "./auth.service.js";
 import { validateLogin, validateSignup } from "./auth.validation.js";
 import { cookiesOptions } from "../../utils/cookies.js";
 
@@ -40,5 +40,3 @@ export const authResolvers = {
         return true;
     },
 };
-
-export default authResolvers;

@@ -149,8 +149,11 @@ export const formatGraphQLError = (graphqlError) => {
     const status = error.status || "error";
     const data = error.data || null;
 
-    // 🟢 DEVELOPMENT MODE: Full details + Stack Trace
-    if (process.env.NODE_ENV === "development") {
+    // 🟢 DEVELOPMENT & TEST MODE: Full details + Stack Trace
+    if (
+        process.env.NODE_ENV === "development" ||
+        process.env.NODE_ENV === "test"
+    ) {
         return {
             message: error.message || "An error occurred.",
             locations: graphqlError.locations,

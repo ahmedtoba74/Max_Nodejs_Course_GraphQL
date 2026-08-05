@@ -15,7 +15,7 @@ export const validateGetUser = (userId) => {
 
 export const validateUpdateUser = ({ userId, status, name, email } = {}) => {
     const errors = [];
-    if (!userId || !validator.isMongoId(userId)) {
+    if (!userId || !validator.isMongoId(userId.toString())) {
         errors.push({ message: "Invalid user ID." });
     }
     if (status && !validator.isLength(status.trim(), { min: 1, max: 280 })) {
