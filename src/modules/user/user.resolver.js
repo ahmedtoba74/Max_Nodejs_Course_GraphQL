@@ -1,4 +1,4 @@
-import * as userService from "./user.service.js";
+import { userService } from "./user.service.js";
 import { validateGetUser, validateUpdateUser } from "./user.validation.js";
 import AppError from "../../utils/appError.js";
 

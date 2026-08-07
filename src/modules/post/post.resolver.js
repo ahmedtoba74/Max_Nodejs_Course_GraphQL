@@ -1,4 +1,4 @@
-import * as postService from "./post.service.js";
+import { postService } from "./post.service.js";
 import AppError from "../../utils/appError.js";
 import {
     getAllPostsValidation,

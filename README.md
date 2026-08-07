@@ -4,9 +4,10 @@
 [![GraphQL](https://img.shields.io/badge/GraphQL-v16-e535ab.svg)](https://graphql.org/)
 [![Express](https://img.shields.io/badge/Express-v5-000000.svg)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248.svg)](https://www.mongodb.com/)
+[![Testing](https://img.shields.io/badge/Tests-88%20Passing-brightgreen.svg)](#-testing-architecture--execution)
 [![Security](https://img.shields.io/badge/Security-Production--Grade-blue.svg)](#security--hardening)
 
-A production-ready, feature-isolated, modular GraphQL API built with Node.js, Express, MongoDB (Mongoose), JWT Authentication, Winston Logging, and Enterprise Security standards.
+A production-ready, feature-isolated, modular GraphQL API built with Node.js, Express, MongoDB (Mongoose), JWT Authentication, Winston Logging, Enterprise Security standards, and an automated 4-layer Test Suite (88 passing tests).
 
 ---
 
@@ -19,7 +20,56 @@ A production-ready, feature-isolated, modular GraphQL API built with Node.js, Ex
 - **Input Validation**: Centralized custom validation using `validator` with structured `422 Unprocessable Entity` error formatting.
 - **Decoupled Binary Media Upload**: Specialized REST endpoint (`PUT /post-image`) for handling `multipart/form-data` uploads alongside GraphQL JSON mutations.
 - **Production Error Handling & Winston Logging**: Environment-aware error responses (Development vs Production) with structured JSON logging (`logs/error.log` and `logs/combined.log`).
+- **Comprehensive Automated Test Suite**: 88 passing tests covering Middlewares, Validations, Services (MongoDB), Resolvers (Sinon.js), and End-to-End GraphQL HTTP APIs (Supertest).
 - **Process Guarding & Graceful Shutdown**: Handlers for `uncaughtException`, `unhandledRejection`, and `SIGTERM`.
+
+---
+
+## 🧪 Testing Architecture & Execution
+
+The project includes an enterprise-grade automated test suite built with **Mocha**, **Chai**, **Sinon.js**, and **Supertest**. It covers **88 passing test cases** across all 4 architectural layers:
+
+### 📊 Testing Matrix
+
+| Test Suite Layer | Directory Path | Test Count | Key Scenarios Covered |
+| :--- | :--- | :--- | :--- |
+| **Middlewares** | `test/middlewares/` | **4 Tests** | Bearer token parsing, invalid/empty tokens, attaching `isAuth` & `userId`. |
+| **Validations** | `test/modules/*/` | **24 Tests** | Password/name lengths, email format, Mongo ID validation (`422 AppError`). |
+| **Services** | `test/modules/*/` | **17 Tests** | Real MongoDB integration tests, user signup/login, password hashing, and strict **403 Forbidden** ownership guards. |
+| **Resolvers** | `test/modules/*/` | **24 Tests** | Fast isolated unit tests with `Sinon.stub` & `Sinon.spy` for auth (401), validation (422), and cookie settings. |
+| **GraphQL E2E** | `test/modules/*/` | **19 Tests** | Full HTTP integration tests over `POST /graphql` via `supertest`, verifying GraphQL selection sets, HTTP status codes, and headers. |
+
+### 📂 Test Suite File Tree
+
+```
+test/
+├── setup.test.js                     # Global Mongoose setup, teardown & collection wiping
+├── middlewares/
+│   └── auth.middleware.test.js       # Auth guard unit tests
+└── modules/
+    ├── auth/
+    │   ├── auth.validation.test.js   # Auth input validation tests
+    │   ├── auth.service.test.js      # Auth MongoDB service integration tests
+    │   ├── auth.resolver.test.js     # Auth resolver unit tests (Sinon)
+    │   └── auth.graphql.test.js      # Auth GraphQL HTTP E2E tests (Supertest)
+    ├── user/
+    │   ├── user.validation.test.js   # User input validation tests
+    │   ├── user.service.test.js      # User MongoDB service integration tests
+    │   ├── user.resolver.test.js     # User resolver unit tests (Sinon)
+    │   └── user.graphql.test.js      # User GraphQL HTTP E2E tests (Supertest)
+    └── post/
+        ├── post.validation.test.js   # Post input validation tests
+        ├── post.service.test.js      # Post MongoDB service integration & 403 ownership tests
+        ├── post.resolver.test.js     # Post resolver unit tests (Sinon)
+        └── post.graphql.test.js      # Post GraphQL HTTP E2E tests (Supertest)
+```
+
+### 🚀 Running Tests
+
+```bash
+# Run all 88 automated tests
+npm test
+```
 
 ---
 

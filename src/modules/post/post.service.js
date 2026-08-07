@@ -175,3 +175,14 @@ export const deletePost = async (id, userId) => {
         updatedAt: post.updatedAt.toISOString(),
     };
 };
+
+export const postService = {
+    createPost,
+    getAllPosts,
+    getPost,
+    updatePost,
+    deletePost,
+};
+
+export default postService;
+

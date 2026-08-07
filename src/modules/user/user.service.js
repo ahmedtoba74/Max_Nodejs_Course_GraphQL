@@ -20,3 +20,10 @@ export const updateUser = async (userId, { status, name, email }) => {
     await user.save();
     return user;
 };
+
+export const userService = {
+    getUser,
+    updateUser,
+};
+
+export default userService;
